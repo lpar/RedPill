@@ -40,7 +40,7 @@
 
 // Constructor to initialize a screensaver in the specified rectangular frame.
 // The frame may be a full screen, or a preview window.
-- (id)initWithFrame:(NSRect)frame isPreview:(BOOL)previewmode
+- (instancetype)initWithFrame:(NSRect)frame isPreview:(BOOL)previewmode
 {
 // Note that double buffering makes performance worse and doesn't improve display quality,
 // so we don't demand it
@@ -69,18 +69,16 @@ NSOpenGLPixelFormat *pixformat;
    // Create and register an array of "default defaults"
    // Note that since the screensaver parameters are mostly between 0 and something < 1 internally,
    // and UI sliders only have a resolution of 0.1, we multiply 'em all by 100, so 0.15 becomes 15.
-   NSDictionary *defdefs = [NSDictionary dictionaryWithObjectsAndKeys:
-      STRIPS_DEFAULT, STRIPS_KEY,
-      VELOCITY_DEFAULT, VELOCITY_KEY,
-      DEPTH_DEFAULT, DEPTH_KEY,
-      CYCLING_DEFAULT, CYCLING_KEY,
-      FALLING_DEFAULT, FALLING_KEY,
-      CURSOR_DEFAULT, CURSOR_KEY,
-      FOG_DEFAULT, FOG_KEY,
-      TOPSTART_DEFAULT, TOPSTART_KEY,
-      MAINONLY_DEFAULT, MAINONLY_KEY,
-      SPOON_DEFAULT, SPOON_KEY,
-      nil];
+   NSDictionary *defdefs = @{STRIPS_KEY: STRIPS_DEFAULT,
+      VELOCITY_KEY: VELOCITY_DEFAULT,
+      DEPTH_KEY: DEPTH_DEFAULT,
+      CYCLING_KEY: CYCLING_DEFAULT,
+      FALLING_KEY: FALLING_DEFAULT,
+      CURSOR_KEY: CURSOR_DEFAULT,
+      FOG_KEY: FOG_DEFAULT,
+      TOPSTART_KEY: TOPSTART_DEFAULT,
+      MAINONLY_KEY: MAINONLY_DEFAULT,
+      SPOON_KEY: SPOON_DEFAULT};
    [defaults registerDefaults:defdefs];
    // Now load either those defaults, or the user's prior choice of preferences
    [self loadDefaults:nil];
@@ -102,17 +100,14 @@ NSOpenGLPixelFormat *pixformat;
    pixformat = [[NSOpenGLPixelFormat alloc] initWithAttributes:attributes];
    if(!pixformat) {
       LogError("initWithFrame", "Failed to create a suitable pixel format. Your graphics card can't cope with this screensaver, sorry.");
-      [self autorelease];
       return nil;
    }
-   [pixformat autorelease];
 
    // Create the GL context
    // QUERY: Why NSZeroRect? Why not frame? I don't know, perhaps someone can tell me...
    glview = [[MatrixOpenGLView alloc] initWithFrame:NSZeroRect pixelFormat:pixformat];
    if (glview == nil) {
       LogError("initWithFrame", "Failed to initialize OpenGL. Not my fault.");
-      [self autorelease];
       return nil;
    }
    // We do the actual glFoo initialization calls later
@@ -120,7 +115,6 @@ NSOpenGLPixelFormat *pixformat;
    // Make the GL context a subview of us
    [self addSubview:glview];
    // Now we can release our handle on it
-   [glview release];
    // Set the animation speed
    [self setAnimationTimeInterval:1/30.0];
    // Initialize the parameters which aren't editable in the dialog box.
@@ -218,7 +212,6 @@ NSOpenGLPixelFormat *pixformat;
 {
    // Release the textures
    if (matrixGlyphs != nil) {
-      [matrixGlyphs release];
       // very important!
       matrixGlyphs = nil;
    }
@@ -315,7 +308,7 @@ struct MatrixStripParams tweaked;
        if (saverParams.driftSpeed == 0.0) {
           // In "zero velocity mode", we need to find the first strip that's in front of this one
           for (i = 0; i < maxi; i++) {
-             strip = [matrixStrips objectAtIndex:i];
+             strip = matrixStrips[i];
              if ([strip z] > d) {
                 break;
              }
@@ -332,12 +325,11 @@ struct MatrixStripParams tweaked;
           }
        }
       // Now send a release, as the array will have retained it
-      [newstrip release];
    }
    // Animate all the strips
    maxi = [matrixStrips count];
    for (i = 0; i < maxi; i++) {
-      strip = [matrixStrips objectAtIndex:i];
+      strip = matrixStrips[i];
       if ([strip animateSelfIsComplete]) {
          // Strip has finished doing anything interesting, so delete it from the array
          // Note that the array releases it for us
@@ -504,13 +496,9 @@ MatrixStrip *strip;
 /// Clean up after ourselves
 - (void) dealloc
 {
-   [matrixGlyphs release];
-   [matrixStrips release];
-   [prefsWindow release];
    [[NSNotificationCenter defaultCenter]
       removeObserver:self
                 name:PREFS_NOTIFICATION
               object:nil];
-   [super dealloc];
 }
 @end

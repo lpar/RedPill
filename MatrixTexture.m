@@ -28,11 +28,10 @@
 void myxor(char *, size_t);
 
 // Initializer needs to know what GL view the texture will be used in.
-- (id)initWithNSOpenGLView:(NSOpenGLView *)someview
+- (instancetype)initWithNSOpenGLView:(NSOpenGLView *)someview
 {
    if (self = [super init]) {
       glview = someview;
-      [glview retain];
       fileWasLoaded = FALSE;
    }
    if (glview == nil) {
@@ -49,10 +48,7 @@ void myxor(char *, size_t);
       glDeleteTextures(1, &texture);
       CheckGLError("dealloc","glDeleteTextures");
    }
-   [dataobj release];
-   [glview release];
    if (data) { free(data); }
-   [super dealloc];
 }
 
 - (GLuint) GLtexture

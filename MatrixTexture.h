@@ -49,15 +49,15 @@
    NSMutableData *dataobj;
 }
 
-- (id)initWithNSOpenGLView:(NSOpenGLView *)someview;
+- (instancetype)initWithNSOpenGLView:(NSOpenGLView *)someview NS_DESIGNATED_INITIALIZER;
 
 // Method to load texture from a file 
 // (kept in the application package Contents/Resources folder)
 - (BOOL)loadFromFile:(NSString *)filename;
 
 // Accessor method for GL texture ID
-- (GLuint)GLtexture;
+@property (NS_NONATOMIC_IOSONLY, readonly) GLuint GLtexture;
 
 // Accessor method for whether the file has been loaded successfully yet
-- (BOOL)fileLoaded;
+@property (NS_NONATOMIC_IOSONLY, readonly) BOOL fileLoaded;
 @end
