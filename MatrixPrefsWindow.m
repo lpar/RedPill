@@ -46,10 +46,8 @@
    // Find out version from bundle
    NSBundle *bundle = [NSBundle bundleForClass:[self class]];
    NSMutableString *versionString = [[NSMutableString alloc]
-      initWithString:[[bundle infoDictionary] 
-      objectForKey:@"CFBundleShortVersionString"]];
+      initWithString:[bundle infoDictionary][@"CFBundleShortVersionString"]];
    [version setStringValue:versionString];
-   [versionString autorelease];
    [spoon setState:FALSE];
    // Hide spoon mode most of the time
    if ((random() % 5) != 3) {

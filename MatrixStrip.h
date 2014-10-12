@@ -64,10 +64,10 @@
 }
 
 // Initialize with top left corner at given position
-- (id) initWithCells:(int)cells x:(GLfloat)x y:(GLfloat)y z:(GLfloat)z params:(struct MatrixStripParams)params;
+- (instancetype) initWithCells:(int)cells x:(GLfloat)x y:(GLfloat)y z:(GLfloat)z params:(struct MatrixStripParams)params NS_DESIGNATED_INITIALIZER;
 
 // Return my z position
-- (GLfloat) z;
+@property (NS_NONATOMIC_IOSONLY, readonly) GLfloat z;
 
 // Pick a random cursor drawing state
 - (void) randomizeCursorState;
@@ -103,5 +103,5 @@
 - (void) drawSelf;
 
 // Animate yourself, return true if you've finished doing anything interesting
-- (BOOL) animateSelfIsComplete;
+@property (NS_NONATOMIC_IOSONLY, readonly) BOOL animateSelfIsComplete;
 @end

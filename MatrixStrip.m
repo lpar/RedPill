@@ -29,7 +29,7 @@
 
 @implementation MatrixStrip
 
-- (id) initWithCells:(int)cells x:(GLfloat)x y:(GLfloat)y z:(GLfloat)z params:(struct MatrixStripParams)params;
+- (instancetype) initWithCells:(int)cells x:(GLfloat)x y:(GLfloat)y z:(GLfloat)z params:(struct MatrixStripParams)params;
 {
 int c;
 
@@ -52,7 +52,6 @@ int c;
    if (cellState == NULL || cellContents == NULL || textureArray == NULL || quadArray == NULL
       || colorArray == NULL) {
       LogError("initwithCells", "Failed to allocate memory for strip. Time to buy more memory.");
-      [self autorelease];
       return nil;
    }
    // Record how big we are and where
@@ -90,7 +89,6 @@ int c;
    if (textureArray) { free(textureArray); }
    if (quadArray) { free(quadArray); }
    if (colorArray) { free(colorArray); }
-	 [super dealloc];
 }
 
 // Access method
